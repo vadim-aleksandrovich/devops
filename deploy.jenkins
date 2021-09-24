@@ -1,0 +1,33 @@
+String commandToRun = 'rm -rf *; \
+git clone git@github.com:VadimAlexandrovich/source_code.git; \
+sudo mv /home/ubuntu/source_code/index.php /var/www/vadik.gq/ \
+'
+pipeline{
+    agent any
+    stages{
+        stage("Connection to web server"){
+            steps{
+              sh "ssh -i /var/lib/jenkins/.ssh/Frankfurt.pem ubuntu@172.31.42.18 /bin/bash -c '\"${commandToRun}\"'"
+            }
+            post{
+                success{
+                    echo "========Deployment successfully========"
+                }
+                failure{
+                    echo "========Deployment failed========"
+                }
+            }
+        }
+    }
+    post{
+        always{
+            echo "========always========"
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
+        }
+    }
+}
